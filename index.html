@@ -307,75 +307,141 @@ body{
   color:rgba(183,163,124,.35);
 }
 
-/* ── §2 Collections ──────────────────────────────────────────────────────── */
+/* ── §2 Collections / Carousels ─────────────────────────────────────────── */
 .collections-intro{
   color:rgba(244,243,240,.6);
-  max-width:500px;
-  margin-bottom:clamp(40px,6vh,72px);
+  max-width:520px;
+  margin-bottom:clamp(48px,7vh,88px);
   font-size:.95rem;
 }
 
-.coll-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(10px,1.6vw,20px);
-}
-@media(max-width:860px){.coll-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.coll-grid{grid-template-columns:1fr}}
+.carousel-block{margin-bottom:clamp(56px,9vh,110px)}
+.carousel-block:last-child{margin-bottom:0}
 
-.coll-slot{
+.carousel-title{
+  font-family:'Marcellus',serif;
+  font-size:clamp(1.1rem,1.8vw,1.45rem);
+  letter-spacing:.08em;
+  margin-bottom:22px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.carousel-title::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+.carousel-wrap{position:relative}
+
+.carousel-track{
+  display:flex;
+  gap:clamp(10px,1.4vw,18px);
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  scroll-behavior:smooth;
+  cursor:grab;
+  padding-bottom:2px;
+}
+.carousel-track::-webkit-scrollbar{display:none}
+.carousel-track.grabbing{cursor:grabbing;scroll-behavior:auto;user-select:none}
+
+.carousel-card{
+  flex:0 0 clamp(200px,30vw,320px);
   aspect-ratio:3/4;
   background:#111213;
   border:1px solid var(--border);
   position:relative;
   overflow:hidden;
-  cursor:pointer;
+  scroll-snap-align:start;
+  flex-shrink:0;
 }
-.coll-slot::before{
-  content:'';
+
+.carousel-card-inner{
   position:absolute;
   inset:0;
-  background:radial-gradient(ellipse at center,rgba(183,163,124,.04) 0%,transparent 75%);
-  z-index:1;
-}
-.coll-inner{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   transition:transform .75s cubic-bezier(.22,1,.36,1);
 }
-.coll-slot:hover .coll-inner{transform:scale(1.05)}
+.carousel-card:hover .carousel-card-inner{transform:scale(1.04)}
 
-.coll-inner img,
-.coll-inner video{
+.carousel-card-inner img,
+.carousel-card-inner video{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
 }
 
-.coll-placeholder{
-  font-size:.58rem;
-  letter-spacing:.28em;
+.card-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  background:linear-gradient(155deg,#191a1b 0%,#0f1011 100%);
+  position:relative;
+}
+.card-placeholder::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 40% 35%,rgba(183,163,124,.07) 0%,transparent 65%);
+}
+.card-ph-num{
+  font-family:'Marcellus',serif;
+  font-size:2.8rem;
+  line-height:1;
+  color:rgba(183,163,124,.22);
+  position:relative;
+}
+.card-ph-label{
+  font-size:.55rem;
+  letter-spacing:.3em;
   text-transform:uppercase;
-  color:rgba(244,243,240,.18);
-  user-select:none;
+  color:rgba(244,243,240,.14);
+  position:relative;
 }
 
-.coll-label{
+.card-caption{
   position:absolute;
   bottom:0;
   left:0;
   right:0;
-  padding:48px 22px 22px;
+  padding:52px 20px 20px;
   background:linear-gradient(to top,rgba(14,14,15,.92) 0%,transparent 100%);
   font-family:'Marcellus',serif;
-  font-size:.95rem;
-  letter-spacing:.05em;
+  font-size:.9rem;
+  letter-spacing:.06em;
   z-index:2;
 }
+
+.carousel-arrows{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  justify-content:flex-end;
+}
+.carr-btn{
+  width:44px;
+  height:44px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--fg);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:border-color .25s,color .25s;
+  flex-shrink:0;
+}
+.carr-btn:hover{border-color:var(--accent);color:var(--accent)}
+.carr-btn:disabled{opacity:.22;pointer-events:none}
 
 /* ── §3 Process ──────────────────────────────────────────────────────────── */
 .steps-grid{
@@ -575,35 +641,125 @@ footer{
 <!-- ── §2 Συλλογές ─────────────────────────────────────────────────────── -->
 <section id="collections" class="section">
   <p class="section-label reveal">— Συλλογές</p>
-  <h2 class="section-heading" data-stagger aria-label="Τρεις κόσμοι, ένα όραμα">Τρεις κόσμοι, ένα όραμα</h2>
-  <p class="collections-intro reveal d1">Από τη μινιμαλιστική κομψότητα έως τη θερμή κλασική αισθητική — οι συλλογές μας εκφράζουν κάθε ταυτότητα.</p>
-  <div class="coll-grid">
+  <h2 class="section-heading" data-stagger aria-label="Κουζίνες &amp; Μπάνια">Κουζίνες &amp; Μπάνια</h2>
+  <p class="collections-intro reveal d1">Κάθε χώρος σχεδιάζεται με την ίδια προσοχή στη λεπτομέρεια — από την κουζίνα μέχρι το μπάνιο.</p>
 
-    <div class="coll-slot reveal d1">
-      <div class="coll-inner">
-        <!-- Replace src with your image: <img src="minimal.jpg" alt="Minimal collection"> -->
-        <span class="coll-placeholder">Media</span>
+  <!-- Kitchen Carousel -->
+  <div class="carousel-block reveal d1">
+    <h3 class="carousel-title">Κουζίνες</h3>
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="track-kitchens">
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="kitchen-1.jpg" alt="Κουζίνα Minimal"> -->
+            <div class="card-placeholder"><span class="card-ph-num">01</span><span class="card-ph-label">Κουζίνα</span></div>
+          </div>
+          <span class="card-caption">Minimal</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="kitchen-2.jpg" alt="Κουζίνα Nordic"> -->
+            <div class="card-placeholder"><span class="card-ph-num">02</span><span class="card-ph-label">Κουζίνα</span></div>
+          </div>
+          <span class="card-caption">Nordic</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="kitchen-3.jpg" alt="Κουζίνα Classic"> -->
+            <div class="card-placeholder"><span class="card-ph-num">03</span><span class="card-ph-label">Κουζίνα</span></div>
+          </div>
+          <span class="card-caption">Classic</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="kitchen-4.jpg" alt="Κουζίνα Contemporary"> -->
+            <div class="card-placeholder"><span class="card-ph-num">04</span><span class="card-ph-label">Κουζίνα</span></div>
+          </div>
+          <span class="card-caption">Contemporary</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="kitchen-5.jpg" alt="Κουζίνα Industrial"> -->
+            <div class="card-placeholder"><span class="card-ph-num">05</span><span class="card-ph-label">Κουζίνα</span></div>
+          </div>
+          <span class="card-caption">Industrial</span>
+        </div>
+
       </div>
-      <span class="coll-label">Minimal</span>
-    </div>
-
-    <div class="coll-slot reveal d2">
-      <div class="coll-inner">
-        <!-- Replace: <img src="nordic.jpg" alt="Nordic collection"> -->
-        <span class="coll-placeholder">Media</span>
+      <div class="carousel-arrows">
+        <button class="carr-btn" data-track="track-kitchens" data-dir="-1" aria-label="Προηγούμενο">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 13L5 8l5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="carr-btn" data-track="track-kitchens" data-dir="1" aria-label="Επόμενο">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
-      <span class="coll-label">Nordic</span>
     </div>
-
-    <div class="coll-slot reveal d3">
-      <div class="coll-inner">
-        <!-- Replace: <img src="classic.jpg" alt="Classic collection"> -->
-        <span class="coll-placeholder">Media</span>
-      </div>
-      <span class="coll-label">Classic</span>
-    </div>
-
   </div>
+
+  <!-- Bathroom Carousel -->
+  <div class="carousel-block reveal d2">
+    <h3 class="carousel-title">Μπάνια</h3>
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="track-bathrooms">
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="bathroom-1.jpg" alt="Μπάνιο Spa"> -->
+            <div class="card-placeholder"><span class="card-ph-num">01</span><span class="card-ph-label">Μπάνιο</span></div>
+          </div>
+          <span class="card-caption">Spa</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="bathroom-2.jpg" alt="Μπάνιο Minimal"> -->
+            <div class="card-placeholder"><span class="card-ph-num">02</span><span class="card-ph-label">Μπάνιο</span></div>
+          </div>
+          <span class="card-caption">Minimal</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="bathroom-3.jpg" alt="Μπάνιο Travertine"> -->
+            <div class="card-placeholder"><span class="card-ph-num">03</span><span class="card-ph-label">Μπάνιο</span></div>
+          </div>
+          <span class="card-caption">Travertine</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="bathroom-4.jpg" alt="Μπάνιο Dark Luxe"> -->
+            <div class="card-placeholder"><span class="card-ph-num">04</span><span class="card-ph-label">Μπάνιο</span></div>
+          </div>
+          <span class="card-caption">Dark Luxe</span>
+        </div>
+
+        <div class="carousel-card">
+          <div class="carousel-card-inner">
+            <!-- <img src="bathroom-5.jpg" alt="Μπάνιο Classic"> -->
+            <div class="card-placeholder"><span class="card-ph-num">05</span><span class="card-ph-label">Μπάνιο</span></div>
+          </div>
+          <span class="card-caption">Classic</span>
+        </div>
+
+      </div>
+      <div class="carousel-arrows">
+        <button class="carr-btn" data-track="track-bathrooms" data-dir="-1" aria-label="Προηγούμενο">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 13L5 8l5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="carr-btn" data-track="track-bathrooms" data-dir="1" aria-label="Επόμενο">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ── §3 Πώς δουλεύουμε ───────────────────────────────────────────────── -->
@@ -807,6 +963,39 @@ footer{
       io.observe(el);
     });
   }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     CAROUSELS — arrow buttons + click-drag
+  ───────────────────────────────────────────────────────────────────────── */
+  document.querySelectorAll('.carr-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const track = document.getElementById(btn.dataset.track);
+      if (!track) return;
+      const card  = track.querySelector('.carousel-card');
+      const step  = card ? card.offsetWidth + parseInt(getComputedStyle(track).gap) : 300;
+      track.scrollBy({ left: parseInt(btn.dataset.dir) * step, behavior: 'smooth' });
+    });
+  });
+
+  /* Drag-to-scroll for each track */
+  document.querySelectorAll('.carousel-track').forEach(function (track) {
+    var startX = 0, startScroll = 0, dragging = false;
+
+    track.addEventListener('mousedown', function (e) {
+      dragging = true;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.classList.add('grabbing');
+    });
+    window.addEventListener('mousemove', function (e) {
+      if (!dragging) return;
+      track.scrollLeft = startScroll - (e.clientX - startX);
+    });
+    window.addEventListener('mouseup', function () {
+      dragging = false;
+      track.classList.remove('grabbing');
+    });
+  });
 
   /* ─────────────────────────────────────────────────────────────────────────
      CONTACT FORM — simple submit feedback
