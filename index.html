@@ -869,26 +869,40 @@ footer{
   let duration = 0;
   let targetTime = 0;
 
-  video.addEventListener('loadedmetadata', function () {
-    duration = video.duration || 30;
-    video.currentTime = 0.001;
-    const p = video.play();
+  function tryReveal() {
+    var p = video.play();
     if (p && p.then) {
       p.then(function () {
         video.pause();
-        video.classList.add('loaded'); // frame confirmed — reveal over bg
-      }).catch(function () {
-        // play() blocked (iOS cellular) — bg image stays visible, scrub still works
-      });
+        video.classList.add('loaded');
+      }).catch(function () {});
     } else {
       video.classList.add('loaded');
     }
+  }
+
+  video.addEventListener('loadedmetadata', function () {
+    duration = video.duration || 30;
+    video.currentTime = 0.001;
+    tryReveal();
   });
 
-  // Canplay fallback for non-promise browsers
   video.addEventListener('canplay', function () {
     video.classList.add('loaded');
   });
+
+  // iOS cellular: start download on first touch
+  document.addEventListener('touchstart', function () {
+    video.load();
+    if (duration === 0) {
+      video.addEventListener('loadedmetadata', function onMeta() {
+        duration = video.duration || 30;
+        video.currentTime = 0.001;
+        tryReveal();
+        video.removeEventListener('loadedmetadata', onMeta);
+      });
+    }
+  }, { once: true, passive: true });
 
   /* rAF scrub loop — runs always, guards on duration */
   function scrub() {
