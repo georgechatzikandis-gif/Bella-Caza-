@@ -107,15 +107,13 @@ body{
   left:50%;
   transform:translate(-50%,-50%);
   width:auto;
-  height:auto;
-  min-width:100vw;
-  min-height:100dvh;
-  max-width:none;
-  max-height:none;
+  height:100dvh;
+  max-width:100vw;
+  max-height:100dvh;
   opacity:0;
   transition:opacity 1s ease;
 }
-@supports not (height:100dvh){#hero-video{min-height:100vh}}
+@supports not (height:100dvh){#hero-video{height:100vh;max-height:100vh}}
 #hero-video.loaded{opacity:1}
 
 /* ── Hero Overlays ───────────────────────────────────────────────────────── */
@@ -565,7 +563,7 @@ footer{
   html{scroll-behavior:auto}
   #hero{height:100dvh}
   .hero-stage{position:relative}
-  #hero-video{opacity:1;min-height:100dvh}
+  #hero-video{opacity:1;height:100dvh}
   #hero-progress,#scroll-hint,#hero-closing{display:none}
   .section-heading span,.reveal{opacity:1;transform:none;transition:none}
   .scroll-hint-inner{animation:none}
