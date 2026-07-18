@@ -332,7 +332,11 @@ body{
   background:var(--border);
 }
 
-.carousel-wrap{position:relative}
+.carousel-wrap{
+  position:relative;
+  margin-left:calc(-1 * var(--sp-h));
+  margin-right:calc(-1 * var(--sp-h));
+}
 
 .carousel-track{
   display:flex;
@@ -343,6 +347,8 @@ body{
   scrollbar-width:none;
   scroll-behavior:smooth;
   cursor:grab;
+  padding-left:var(--sp-h);
+  padding-right:var(--sp-h);
   padding-bottom:2px;
 }
 .carousel-track::-webkit-scrollbar{display:none}
@@ -424,6 +430,7 @@ body{
   gap:10px;
   margin-top:18px;
   justify-content:flex-end;
+  padding-right:var(--sp-h);
 }
 .carr-btn{
   width:44px;
