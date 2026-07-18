@@ -857,6 +857,10 @@ footer{
   let duration = 0;
   let targetTime = 0;
 
+  function showVideo() {
+    video.classList.add('loaded');
+  }
+
   video.addEventListener('loadedmetadata', function () {
     duration = video.duration || 30;
     video.currentTime = 0.001;
@@ -864,11 +868,17 @@ footer{
     if (p && p.then) {
       p.then(function () { video.pause(); }).catch(function () {});
     }
+    showVideo(); // show as soon as metadata is ready
   });
 
-  video.addEventListener('loadeddata', function () {
-    video.classList.add('loaded');
-  });
+  video.addEventListener('loadeddata', showVideo);
+  video.addEventListener('canplay',    showVideo);
+
+  // Fallback: show after 2.5s regardless
+  setTimeout(showVideo, 2500);
+
+  // Already loaded (cached)
+  if (video.readyState >= 2) showVideo();
 
   /* rAF scrub loop — runs always, guards on duration */
   function scrub() {
