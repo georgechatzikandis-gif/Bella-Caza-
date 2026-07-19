@@ -100,13 +100,6 @@ body{
 }
 @supports not (height:100dvh){.hero-stage{height:100vh}}
 
-/* ── Hero fallback bg (always visible, video overlays when ready) ─────────── */
-#hero-bg{
-  position:absolute;
-  inset:0;
-  background:url('images/kitchen-1.png') center/cover no-repeat;
-  z-index:0;
-}
 
 /* ── Video ───────────────────────────────────────────────────────────────── */
 #hero-video{
@@ -605,7 +598,7 @@ footer{
   <div class="hero-stage">
 
     <!-- Always-visible fallback image -->
-    <div id="hero-bg" aria-hidden="true"></div>
+
 
     <video
       id="hero-video"
